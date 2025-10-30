@@ -1,31 +1,25 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'maven:4.0.0-rc-4-sapmachine-25'
+        }
+    }
 
     stages {
-
-        stage('Test') {
+        stage('Build & Test') {
             steps {
-                echo 'Exécution des tests unitaires...'
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    echo 'Publication des résultats de tests...'
-                    junit '**/target/surefire-reports/*.xml'
-                }
+                sh 'mvn clean test'
             }
         }
     }
 
     post {
         success {
-            echo 'Build terminé avec succès !'
+            echo '✅ Build succeeded!'
         }
         failure {
-            echo 'Build échoué.'
-        }
-        always {
-            echo 'Pipeline terminé (quel que soit le statut).'
+            echo '❌ Build failed!'
         }
     }
 }
+ 
