@@ -1,34 +1,31 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.9-eclipse-temurin-17'
-            args '-v $HOME/.m2:/root/.m2'
-        }
-    }
+    /* ↪ Exécution sur un agent Docker avec Node.js */
+    agent any
 
     stages {
         stage('Checkout') {
             steps {
-                echo 'Cloning repository...'
+                echo 'Clonage du dépôt GitHub...'
                 checkout scm
             }
         }
 
-        stage('Build') {
+        stage('Install dependencies') {
             steps {
-                echo 'Compiling Maven project...'
-                sh 'mvn clean compile'
+                echo 'Installation des dépendances Node.js...'
+                sh 'npm install'
             }
         }
 
-        stage('Test') {
+        stage('Run tests') {
             steps {
-                echo 'Running unit tests...'
-                sh 'mvn test'
+                echo 'Exécution des tests Jest...'
+                sh 'npm test'
             }
             post {
                 always {
-                    junit '**/target/surefire-reports/*.xml'
+                    echo 'Publication des résultats de tests...'
+                    junit 'reports/junit.xml'
                 }
             }
         }
@@ -36,10 +33,13 @@ pipeline {
 
     post {
         success {
-            echo 'Build succeeded!'
+            echo 'Build terminé avec succès !'
         }
         failure {
-            echo 'Build failed!'
+            echo 'Build échoué.'
+        }
+        always {
+            echo 'Pipeline terminé (quel que soit le statut).'
         }
     }
 }
