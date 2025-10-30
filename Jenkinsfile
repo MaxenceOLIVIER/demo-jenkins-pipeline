@@ -1,5 +1,4 @@
 pipeline {
-    /* ↪ Exécution sur un agent Docker avec Node.js */
     agent any
 
     stages {
@@ -10,22 +9,22 @@ pipeline {
             }
         }
 
-        stage('Install dependencies') {
+        stage('Build') {
             steps {
-                echo 'Installation des dépendances Node.js...'
-                sh 'npm install'
+                echo 'Compilation du projet Maven...'
+                sh 'mvn clean compile'
             }
         }
 
-        stage('Run tests') {
+        stage('Test') {
             steps {
-                echo 'Exécution des tests Jest...'
-                sh 'npm test'
+                echo 'Exécution des tests unitaires...'
+                sh 'mvn test'
             }
             post {
                 always {
                     echo 'Publication des résultats de tests...'
-                    junit 'reports/junit.xml'
+                    junit '**/target/surefire-reports/*.xml'
                 }
             }
         }
