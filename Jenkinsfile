@@ -2,19 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                echo 'Clonage du dépôt GitHub...'
-                checkout scm
-            }
-        }
-
-        stage('Build') {
-            steps {
-                echo 'Compilation du projet Maven...'
-                sh 'mvn clean compile'
-            }
-        }
 
         stage('Test') {
             steps {
